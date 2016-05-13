@@ -3,11 +3,10 @@
 
 Stepper stepper(STEPS, 8, 9, 10, 11);
 
-void Change_Value_in_Serial();
 void TimeStamp(unsigned long *a);
 int angle = 0;
 int pre_angle = 0;
-int time_dif  = 0;
+unsigned long time_dif  = 0;
 String command;
 unsigned long time_stamp[3] = {0, 0, 0};
 unsigned long pre_stamp[3] = {0, 0, 0};
@@ -15,6 +14,9 @@ bool flag[3] = {false, false, false};
 bool pre_flag[3] = {false, false, false};
 
 void setup() {
+  pinMode(2, INPUT);
+  pinMode(4, INPUT);
+  pinMode(6, INPUT);
   Serial.begin(9600);
   stepper.setSpeed(120);
 }
@@ -27,24 +29,24 @@ void loop() {
   //stepper.step(angle);
   PhaseFree();
   Serial.println(angle);
-//  Serial.println("TimeStamp[0] = ");
-//  Serial.println(time_stamp[0]);
-//  Serial.println("TimeStamp[1] = ");
-//  Serial.println(time_stamp[1]);
-//  Serial.println("TimeStamp[2] = ");
-//  Serial.println(time_stamp[2]);
-//  Serial.print("PF[0] = ");
-//  Serial.println(pre_flag[0]);
-//  Serial.print("PF[1] = ");
-//  Serial.println(pre_flag[1]);
-//  Serial.print("PF[2] = ");
-//  Serial.println(pre_flag[2]);
-//  Serial.print("F[0] = ");
-//  Serial.println(flag[0]);
-//  Serial.print("F[1] = ");
-//  Serial.println(flag[1]);
-//  Serial.print("F[2] = ");
-//  Serial.println(flag[2]);
+  //  Serial.println("TimeStamp[0] = ");
+  //  Serial.println(time_stamp[0]);
+  //  Serial.println("TimeStamp[1] = ");
+  //  Serial.println(time_stamp[1]);
+  //  Serial.println("TimeStamp[2] = ");
+  //  Serial.println(time_stamp[2]);
+  //  Serial.print("PF[0] = ");
+  //  Serial.println(pre_flag[0]);
+  //  Serial.print("PF[1] = ");
+  //  Serial.println(pre_flag[1]);
+  //  Serial.print("PF[2] = ");
+  //  Serial.println(pre_flag[2]);
+  //  Serial.print("F[0] = ");
+  //  Serial.println(flag[0]);
+  //  Serial.print("F[1] = ");
+  //  Serial.println(flag[1]);
+  //  Serial.print("F[2] = ");
+  //  Serial.println(flag[2]);
 }
 
 void Change_Value_in_Serial() //new line
@@ -75,62 +77,64 @@ void Change_Value_in_Serial() //new line
   }
 }
 
-void TimeStamp(unsigned long* a){
-  if(digitalRead(2) == 1)
+void TimeStamp(unsigned long* a) {
+  if (digitalRead(2) == 1)
     flag[0] = true;
   else
-    flag[0] =false;
-  if(digitalRead(4) == 1)
+    flag[0] = false;
+  if (digitalRead(4) == 1)
     flag[1] = true;
   else
-    flag[1] =false;
-  if(digitalRead(6) == 1)
+    flag[1] = false;
+  if (digitalRead(6) == 1)
     flag[2] = true;
   else
-    flag[2] =false;
+    flag[2] = false;
 
-  for(int i = 0; i<3 ; i++){
-    if((pre_flag[i]==false) && (flag[i] ==true)){
+  for (int i = 0; i < 3 ; i++) {
+    if ((pre_flag[i] == false) && (flag[i] == true)) {
       a[i] = micros();
     }
     pre_flag[i] = flag[i];
   }
-//  if(digitalRead(2) == 1)
-//    a[0] = micros();
-//  if(digitalRead(4) == 1)
-//    a[1] = micros();
-//  if(digitalRead(6) == 1)
-//    a[2] = micros();
+  //  if(digitalRead(2) == 1)
+  //    a[0] = micros();
+  //  if(digitalRead(4) == 1)
+  //    a[1] = micros();
+  //  if(digitalRead(6) == 1)
+  //    a[2] = micros();
 
 }
-void PhaseFree(void){
+
+void PhaseFree(void) {
   digitalWrite(8, LOW);
   digitalWrite(9, LOW);
   digitalWrite(10, LOW);
   digitalWrite(11, LOW);
 }
-int CalAng(unsigned long * a){
+
+int CalAng(unsigned long * a) {
   bool change_f = false;
   double radian = 0;
-  for(int i=0 ; i< 3 ; i++){
-    if(pre_stamp[i] != time_stamp[i]){
+  for (int i = 0 ; i < 3 ; i++) {
+    if (pre_stamp[i] != time_stamp[i]) {
       pre_stamp[i] = time_stamp[i];
       change_f = true;
     }
   }
-  if(change_f == true){
+  if (change_f == true) {
     time_dif = a[0] - a[1];
     radian = acos(0.34 * time_dif / 300);
     angle = map(radian, 0, PI, 0, 200);
-    
   }
-  else{
-    angle =0;
+  else {
+    angle = 0;
   }
-//  pre_angle = angle;
+  //  pre_angle = angle;
   return angle;
 }
-void Move(int a){
+
+void Move(int a) {
   int num_step = a - pre_angle;
   stepper.step(num_step);
   pre_angle = a;
