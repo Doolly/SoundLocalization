@@ -1,4 +1,4 @@
-void Change_Value_in_Serial() //new line
+void Change_Value_in_Serial(void) //new line
 {
   char c;
 
@@ -24,54 +24,58 @@ void Change_Value_in_Serial() //new line
   }
 }
 
-void TimeStamp(unsigned long *a) {
-  bool flag[3] = {0, 0, 0};
-  flag[0] = digitalRead(MIC_0);
-  flag[1] = digitalRead(MIC_1);
-  flag[2] = digitalRead(MIC_2);
-
-  for (int i = 0; i < 3 ; i++) {
-    if (flag[i] != flag_last[i] )
-      last_bounce_time[i] = millis(); //flag가 바뀐 순간 기록
-  }
-
-  for (int i = 0; i < 3 ; i++) {
-    if ((millis() - last_bounce_time[i])  > debounce_time) { //현재에서 전에 바뀐 순간까지가 0.05.초 이상이면
-      if (flag[i] != flag_now[i]) { //0.05초가 지난후 바껴있으면
-        flag_now[i] = flag[i];
-
-        if (flag_now[i] == HIGH) //그 바뀐게 HIGH 이면
-          stamp_now[i] = micros(); //스탬프를 찍는다
+int TimeStamp(void) {
+  if ((flag_now[0] == true) && (flag_now[1] == true) && (flag_now[2] == true)) {
+    time_dif[0] = stamp_now[1] - stamp_now[0];
+    time_dif[1] = stamp_now[2] - stamp_now[1];
+    time_dif[2] = stamp_now[0] - stamp_now[2];
+    for (int i = 0; i < 3 ; i++) {
+      if (time_dif[i] < 0) {
+        time_dif[i] *= -1;
       }
     }
-    flag_last[i] = flag[i];
+    if ((stamp_now[0] < stamp_now[1]) && (stamp_now[0] < stamp_now[2])) {
+      angle = 0; //+ 34 * time_dif[2] / 1000 - 34 * time_dif[0] / 1000;
+      if(time_dif[0] <300){
+        angle = 34;
+      }
+      else if(time_dif[2] < 300){
+        angle = -34;
+      }
+    }
+    else if ((stamp_now[1] < stamp_now[0]) && (stamp_now[1] < stamp_now[2])) {
+      angle = 67;// + 33 * time_dif[0] / 1500 - 33 * time_dif[1] / 1000;
+      if(time_dif[0] <300){
+        angle = 34;
+      }
+      else if(time_dif[1] < 300){
+        angle = 100;
+      }
+    }
+    else if ((stamp_now[2] < stamp_now[0]) && (stamp_now[2] < stamp_now[1])) {
+      angle = -67;// + 33 * time_dif[2] / 1500 - 33 * time_dif[1] / 1500;
+      if(time_dif[1] <300){
+        angle = -100;
+      }
+      else if(time_dif[2] < 300){
+        angle = -34;
+      }
+    }
+    flag_now[0] = false;
+    flag_now[1] = false;
+    flag_now[2] = false;
+    
   }
-  Serial.print("stamp_now[0] = ");
-  Serial.println(stamp_now[0]);
-  Serial.print("stamp_now[1] = ");
-  Serial.println(stamp_now[1]);
-}
-
-int CalAng(unsigned long *a) {
-  bool change_f = false;
-  double radian = 0;
-
-  if ( (flag_last[0] != flag_now[0]) && (flag_last[1] != flag_now[1]) ) { //셋다 다르면 계산시작
-    change_f = true;
-  }
-  if (change_f == true) {
-    time_dif = a[0] - a[1];
-    radian = acos(0.34 * time_dif / 300);
-    angle = map(radian, 0, PI, 0, 200);
-    Serial.print("time_dif = ");
-    Serial.println(time_dif);
-    Serial.print("radian = ");
-    Serial.println(radian);
-  }
-  else {
-    angle = 0;
-  }
-
+  
+  
+    Serial.print("stamp_now[0] = ");
+    Serial.println(stamp_now[0]);
+    Serial.print("stamp_now[1] = ");
+    Serial.println(stamp_now[1]);
+    Serial.print("stamp_now[2] = ");
+    Serial.println(stamp_now[2]);
+    Serial.print("angle = ");
+    Serial.println(angle);
   return angle;
 }
 
@@ -88,3 +92,32 @@ void PhaseFree(void) {
   digitalWrite(MOTER_PIN_3, LOW);
   digitalWrite(MOTER_PIN_4, LOW);
 }
+
+void Mic_0(void) {
+  unsigned long temp;
+  temp = micros();
+  if (((temp - stamp_last[0]) > 20000)) {
+    stamp_now[0] = temp;
+    flag_now[0] = true;
+  }
+  stamp_last[0] = stamp_now[0];
+}
+void Mic_1(void) {
+  unsigned long temp;
+  temp = micros();
+  if (((temp - stamp_last[1]) > 20000)) {
+    stamp_now[1] = temp;
+    flag_now[1] = true;
+  }
+  stamp_last[1] = stamp_now[1];
+}
+void Mic_2(void) {
+  unsigned long temp;
+  temp = micros();
+  if (((temp - stamp_last[2]) > 20000)) {
+    stamp_now[2] = temp;
+    flag_now[2] = true;
+  }
+  stamp_last[2] = stamp_now[2];
+}
+
