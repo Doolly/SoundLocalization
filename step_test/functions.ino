@@ -1,10 +1,28 @@
 int Get_angle(void) {
-  while ((flag_now[0] == false) || (flag_now[1] == false) || (flag_now[2] == false)); 
-  
-    time_dif[0] = stamp_now[1] - stamp_now[0];
-    time_dif[1] = stamp_now[2] - stamp_now[1];
-    time_dif[2] = stamp_now[0] - stamp_now[2];
-  
+  while ((flag_now[0] == false) || (flag_now[1] == false) || (flag_now[2] == false));
+
+  time_dif[1] = stamp_now[1] - stamp_now[0];
+  time_dif[2] = stamp_now[2] - stamp_now[0];
+
+  double tangential = 1.15 * time_dif[2] / time_dif[1] - 0.58;
+  if (tangential > 0 ) {
+    if (time_dif[2] < 0)
+      angle = atan(tangential);
+    else
+      angle = atan(tangential) - PI / 2;
+  }
+  else  {
+    if ((stamp_now[2] > stamp_now[0]) && (stamp_now[2] > stamp_now[1]))
+      angle = atan(tangential);
+    else
+      angle = atan(tangential) + PI / 2;
+  }
+  double angle_in_degree = angle * 180 / PI;
+  Serial.print("angle = ");
+  Serial.print(angle);
+  Serial.print("    angle_in_degree = ");
+  Serial.println(angle_in_degree);
+
   flag_now[0] = false;
   flag_now[1] = false;
   flag_now[2] = false;
@@ -15,7 +33,7 @@ int Get_angle(void) {
 void Move(int Angle_now) {
   int angle_dif = Angle_now - last_angle;
   if (angle_dif != 0) {
-    int num_step = map(Angle_now, -PI,PI,-200,200); //수정할지도
+    int num_step = map(Angle_now, -PI, PI, -200, 200); 
     stepper.step(num_step);
     last_angle = Angle_now;
     PhaseFree();

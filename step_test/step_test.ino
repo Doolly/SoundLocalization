@@ -24,6 +24,11 @@ const int bounce_delay = 20000; //0.2us
 int angle = 0;
 int last_angle = 0;
 String command;
+
+//double mic_X_cor[3]={};
+//double mic_Y_cor[3]={};
+int sound_vel = 340000; //   sound velocity in mm/s
+
 long time_dif[3] = {0, 0, 0};
 unsigned long stamp_now[3] = {0, 0, 0};
 unsigned long stamp_last[3] = {0, 0, 0};
