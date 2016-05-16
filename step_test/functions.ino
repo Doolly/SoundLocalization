@@ -1,21 +1,29 @@
-int Get_angle(void) {
+double Get_angle(void) {
   while ((flag_now[0] == false) || (flag_now[1] == false) || (flag_now[2] == false));
-
   time_dif[1] = stamp_now[1] - stamp_now[0];
   time_dif[2] = stamp_now[2] - stamp_now[0];
-
+  Serial.print("time_dif[1] = "); Serial.println(time_dif[1]);
+  Serial.print("time_dif[2] = "); Serial.println(time_dif[2]);
   double tangential = 1.15 * time_dif[2] / time_dif[1] - 0.58;
   if (tangential > 0 ) {
-    if (time_dif[2] < 0)
+    if (time_dif[2] < 0) {
       angle = atan(tangential);
-    else
+      Serial.print("angle 1sabun = "); Serial.println(angle);
+    }
+    else {
       angle = atan(tangential) - PI / 2;
+      Serial.print("angle 3sabun = "); Serial.println(angle);
+    }
   }
   else  {
-    if ((stamp_now[2] > stamp_now[0]) && (stamp_now[2] > stamp_now[1]))
+    if ((stamp_now[2] > stamp_now[0]) && (stamp_now[2] > stamp_now[1])) {
       angle = atan(tangential);
-    else
+      Serial.print("angle 2sabun = "); Serial.println(angle);
+    }
+    else {
       angle = atan(tangential) + PI / 2;
+      Serial.print("angle 4sabun = "); Serial.println(angle);
+    }
   }
   double angle_in_degree = angle * 180 / PI;
   Serial.print("angle = ");
@@ -31,15 +39,16 @@ int Get_angle(void) {
 }
 
 void Move(int Angle_now) {
-  int angle_dif = Angle_now - last_angle;
-  if (angle_dif != 0) {
-    int num_step = map(Angle_now, -PI, PI, -200, 200); 
-    stepper.step(num_step);
-    last_angle = Angle_now;
-    PhaseFree();
-    Serial.print("num_step = ");
-    Serial.println(num_step);
-  }
+  // int angle_dif = Angle_now - last_angle;
+  //if (angle_dif != 0) {
+  int num_step = map(Angle_now, -PI, PI, -200, 200);
+  stepper.step(num_step);
+  last_angle = Angle_now;
+  PhaseFree();
+  Serial.print("num_step = ");
+  Serial.println(num_step);
+  Serial.println("/////////////////////////////////////////////////////////////////////////////");
+  // }
 }
 
 void Mic_0_stamp(void) {

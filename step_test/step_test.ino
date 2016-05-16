@@ -14,15 +14,15 @@ Stepper stepper(STEPS, MOTER_PIN_1, MOTER_PIN_2, MOTER_PIN_3, MOTER_PIN_4);
 void Change_Value_in_Serial(void);
 void PhaseFree(void);
 void Move(int ang);
-int Get_angle(void);
+double Get_angle(void);
 void Mic_0_stamp(void);
 void Mic_1_stamp(void);
 void Mic_2_stamp(void);
 
 const int moter_speed = 240; //240rpm
 const int bounce_delay = 20000; //0.2us
-int angle = 0;
-int last_angle = 0;
+double angle = 0;
+double last_angle = 0;
 String command;
 
 //double mic_X_cor[3]={};
@@ -32,8 +32,8 @@ int sound_vel = 340000; //   sound velocity in mm/s
 long time_dif[3] = {0, 0, 0};
 unsigned long stamp_now[3] = {0, 0, 0};
 unsigned long stamp_last[3] = {0, 0, 0};
-bool flag_now[3] = {false, false, false};
-bool flag_last[3] = {false, false, false};
+volatile bool flag_now[3] = {false, false, false};
+volatile bool flag_last[3] = {false, false, false};
 
 void setup() {
   pinMode(MIC_0, INPUT);
