@@ -1,4 +1,6 @@
 #include <Stepper.h>
+#include "TimerThree.h"
+
 #define STEPS 200
 #define MIC_0 2
 #define MIC_1 4
@@ -10,23 +12,31 @@
 
 Stepper stepper(STEPS, MOTER_PIN_1, MOTER_PIN_2, MOTER_PIN_3, MOTER_PIN_4);
 
-void TimeStamp(unsigned long *a);
+void TimeStamp(void);
 void Change_Value_in_Serial();
 void PhaseFree(void);
 void Move(int ang);
-int CalAng(unsigned long *a);
+void Get_angle(void);
 
 int angle = 0;
 int last_angle = 0;
 String command;
-long time_dif  = 0;
+
+const int limit = 450;
+const int moter_speed = 240; //240rpm
+const int delay_time = 5; // 3us
+
+long time_dif[3] = {0, 0, 0};
 unsigned long stamp_now[3] = {0, 0, 0};
-unsigned long stamp_last[3] = {0, 0, 0};
-unsigned long last_bounce_time[3] = {0, 0, 0};
-unsigned long debounce_time = 50; //debounce time in ms
+unsigned long micros_timer = 0;
+bool flag[3] = {0, 0, 0};
 bool flag_now[3] = {false, false, false};
 bool flag_last[3] = {false, false, false};
 
+void callback() {
+  micros_timer++;
+
+}
 
 void setup() {
   pinMode(MIC_0, INPUT);
@@ -34,13 +44,17 @@ void setup() {
   pinMode(MIC_2, INPUT);
   Serial.begin(9600);
   stepper.setSpeed(120); //120rpm
+  Timer3.initialize(1);
+  //TimerThree.setPeriod(1);
+  Timer3.attachInterrupt(callback);
 }
 
 void loop() {
-  TimeStamp(stamp_now);
-  Change_Value_in_Serial();
-  angle = CalAng(stamp_now);
-  Move(angle);
+  TimeStamp();
+
+  //  Change_Value_in_Serial();
+  //  angle = CalAng(stamp_now);
+  //  Move(angle);
 }
 
 
