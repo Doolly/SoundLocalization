@@ -87,22 +87,15 @@ void GetAngle(void) {
     }
 
     else {
-      Serial.println("Error! diffrence is too big");
+      Serial.println("Error! time diffrence is too big or exact 90 dgree");
     }
   }
   else if (!(flag_now[0] == flag_now[1] == flag_now[2] == 0) && (flag_now[0] == false || flag_now[1] == false || flag_now[2] == false)) {
-
     flag_now[0] = false;
     flag_now[1] = false;
     flag_now[2] = false;
-
   }
-  //  else {
-  //    Serial.println("Error! Louder!");
-  //  }
-
 }
-
 
 void Move() {
   double angle_dif = angle_step - last_angle_step;
