@@ -57,55 +57,48 @@ void GetAngle(void) {
     Serial.print("time_dif[1] = " + String(time_dif[1]) + "\n");
     Serial.print("time_dif[2] = " + String(time_dif[2]) + "\n");
     Serial.print("time_dif[3] = " + String(time_dif[3]) + "\n");
-    //
-    //    if ((abs(time_dif[1]) < 500) && (abs(time_dif[2]) < 500) && (time_dif[1] != 0)) {
-    //      double tangential = (double) (30 * time_dif[2] - 15 * time_dif[1]) / (26 * time_dif[1]);
-    //      double angle_in_degree = 0;
-    //
-    //      if (tangential >= 0) {
-    //        if (time_dif[2] < 0) {
-    //          angle = atan(tangential);
-    //          angle_in_degree = angle * 180 / PI;
-    //          Serial.println("quadrant = 1");
-    //        }
-    //        else {
-    //          angle = atan(tangential) - PI;
-    //          angle_in_degree = angle * 180 / PI;
-    //          Serial.println("quadrant = 3");
-    //        }
-    //      }
-    //
-    //      if (tangential < 0) { //else 보다 보기편함
-    //        if (time_dif[1] > 0) {
-    //          angle = atan(tangential) + PI;
-    //          angle_in_degree = angle * 180 / PI;
-    //          Serial.println("quadrant = 2");
-    //        }
-    //        else if (time_dif[0] > 0) {
-    //          angle = atan(tangential);
-    //          angle_in_degree = angle * 180 / PI;
-    //          Serial.println("quadrant = 4");
-    //        }
-    //      }
-    //      angle_step = (int) map(angle * 1000, -PI * 1000, PI * 1000, -100, 100);
-    //      Serial.print("angle = " + String(angle) + "\n");
-    //      Serial.print("angle_in_degree = " + String(angle_in_degree) + "\n");
-    //      Serial.print("angle_in_step = " + String(angle_step) + "\n");
-    flag_now[0] = false;
-    flag_now[1] = false;
-    flag_now[2] = false;
-    flag_now[3] = false;
-    //    }
-    //
-    //    else {
-    //      Serial.println("Error! time diffrence is too big or exact 90 dgree");
-    //    }
-  }
-  else if (!(flag_now[0] == flag_now[1] == flag_now[2] == flag_now[3] == 0) && (flag_now[0] == false || flag_now[1] == false || flag_now[2] == false) || flag_now[0] == false) {
-    flag_now[0] = false;
-    flag_now[1] = false;
-    flag_now[2] = false;
-    flag_now[3] = false;
+    //    x = (float) (46 * time_dif[1] * time_dif[3] - 50 * time_dif[2] * time_dif[3] + 50 * time_dif[3] * time_dif[3]) / (time_dif[1] * time_dif[2] + time_dif[1] * time_dif[3]) - 115600000 * (time_dif[3] * time_dif[3] - time_dif[1] * time_dif[3]) + 625 - 625 * time_dif[3] / time_dif[1])) ;
+    //    y = (float)23 * time_dif[1] - 25 * time_dif[2] + 25 * time_dif[3];
+    float a = (float)time_dif[1] / time_dif[3] ;
+
+    Serial.print("a = " + String(a) + "\n");
+    //    A[1][1] = (float) 50 / time_dif[2];
+    //    A[1][2] = (float)50 / time_dif[2] - 50 / time_dif[1];
+    //    A[1][3] = (float)12 / time_dif[1];
+    //    A[2][1] = (float)50 / time_dif[3];
+    //    A[2][2] = (float) 50 / time_dif[1];
+    //    A[2][3] = (float)12 / time_dif[1];
+    //    A[3][1] = (float) 50 / time_dif[2] - 50 / time_dif[3];
+    //    A[3][2] = (float) 50 / time_dif[2];
+    //    A[3][3] = (float)0;
+
+
+    if ((abs(time_dif[1]) < 500) && (abs(time_dif[2]) < 500) && (time_dif[1] != 0)) {
+      double tangential = (double) (30 * time_dif[2] - 15 * time_dif[1]) / (26 * time_dif[1]);
+      double angle_in_degree = 0;
+
+      //    double angle = atan2 (double y - 12.5, double x - 12.5)  ;
+
+      angle_step = (int) map(angle * 1000, -PI * 1000, PI * 1000, -100, 100);
+      Serial.print("angle = " + String(angle) + "\n");
+      Serial.print("angle_in_degree = " + String(angle_in_degree) + "\n");
+      Serial.print("angle_in_step = " + String(angle_step) + "\n");
+      flag_now[0] = false;
+      flag_now[1] = false;
+      flag_now[2] = false;
+      flag_now[3] = false;
+      //    }
+      //
+      //    else {
+      //      Serial.println("Error! time diffrence is too big or exact 90 dgree");
+      //    }
+    }
+    else if (!(flag_now[0] == flag_now[1] == flag_now[2] == flag_now[3] == 0) && (flag_now[0] == false || flag_now[1] == false || flag_now[2] == false) || flag_now[0] == false) {
+      flag_now[0] = false;
+      flag_now[1] = false;
+      flag_now[2] = false;
+      flag_now[3] = false;
+    }
   }
 }
 

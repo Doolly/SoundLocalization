@@ -1,6 +1,7 @@
 #include <Stepper.h>
 #include <math.h>
 #include <Servo.h>
+#include "MatrixMath.h"
 
 #define STEPS 200 //모터의 스텝수
 #define MIC_0 14
@@ -17,6 +18,13 @@
 #define MS1 4
 #define MS2 5
 #define EN  6
+
+#define N  (2)
+
+float A[N][N];
+float B[N] ;
+float C[N] ;
+float x,y;
 
 Servo servo;
 
