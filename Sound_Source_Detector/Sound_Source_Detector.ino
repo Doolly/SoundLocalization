@@ -24,7 +24,7 @@
 float A[N][N];
 float B[N] ;
 float C[N] ;
-float x,y;
+float x, y;
 
 Servo servo;
 
@@ -33,6 +33,7 @@ void PhaseFree(void);
 void Move(void);
 void GetAngle(void);
 void TimeStamp(void);
+
 
 const int moter_speed = 50; // rpm
 String command; //debuging 용 변수
@@ -59,14 +60,15 @@ void setup() {
 }
 
 void loop() {
-  TimeStamp();
-  GetAngle();
+  while (Serial.available()) {
+  //TimeStamp();
+  //GetAngle();
   //  Move();
-  //Change_Value_in_Serial();
-  // PhaseFree();
-  //motorctrl(100, angle_step)
+  Change_Value_in_Serial();
 
-
+    motorctrl(100, angle_step);
+    //PhaseFree();
+  }
 }
 
 

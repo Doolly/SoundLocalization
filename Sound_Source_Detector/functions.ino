@@ -59,9 +59,8 @@ void GetAngle(void) {
     Serial.print("time_dif[3] = " + String(time_dif[3]) + "\n");
     //    x = (float) (46 * time_dif[1] * time_dif[3] - 50 * time_dif[2] * time_dif[3] + 50 * time_dif[3] * time_dif[3]) / (time_dif[1] * time_dif[2] + time_dif[1] * time_dif[3]) - 115600000 * (time_dif[3] * time_dif[3] - time_dif[1] * time_dif[3]) + 625 - 625 * time_dif[3] / time_dif[1])) ;
     //    y = (float)23 * time_dif[1] - 25 * time_dif[2] + 25 * time_dif[3];
-    float a = (float)time_dif[1] / time_dif[3] ;
-
-    Serial.print("a = " + String(a) + "\n");
+    //    float a = (float)time_dif[1] / time_dif[3] ;
+    //    Serial.print("a = " + String(a) + "\n");
     //    A[1][1] = (float) 50 / time_dif[2];
     //    A[1][2] = (float)50 / time_dif[2] - 50 / time_dif[1];
     //    A[1][3] = (float)12 / time_dif[1];
@@ -122,25 +121,32 @@ void motorctrl(int servo_angle, int angle_step ) {
 
   int angle_dif = angle_step - last_angle_step;
 
+  Serial.print("angle_dif = " + String(angle_dif) + ", ");
+  Serial.print("angle_step = " + String(angle_step) + ", ");
+  Serial.print("last_angle_step = " + String(last_angle_step) + "\n");
+
   if (angle_step > 0) {
     digitalWrite(dir, LOW);
     for (int x = 0; x <= angle_dif ; x++)
     {
       digitalWrite(stp, HIGH);
-      delay(7);
+      delay(10);
       digitalWrite(stp, LOW);
-      delay(7);
+      delay(10);
+      Serial.print("for angle_dif = " + String(angle_dif) + "\n");
     }
+   
   }
   else {
     digitalWrite(dir, HIGH);
     for (int x = -1; x > angle_dif ; x--)
     {
       digitalWrite(stp, HIGH);
-      delay(7);
+      delay(3);
       digitalWrite(stp, LOW);
-      delay(7);
+      delay(3);
     }
+   
   }
   last_angle_step = angle_step;
 }
